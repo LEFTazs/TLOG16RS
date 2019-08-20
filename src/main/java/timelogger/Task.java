@@ -128,23 +128,26 @@ public class Task {
     
     public void setStartTime(LocalTime startTime) {
         this.startTime = startTime;
-        if (isEndTimeSet())
+        if (isEndTimeSet()) {
             roundEndTime();
-        throwExceptionIfWrongTimeOrder();
+            throwExceptionIfWrongTimeOrder();
+        }
     }
 
     public void setStartTime(int hour, int min) {
         this.startTime = LocalTime.of(hour, min);
-        if (isEndTimeSet())
+        if (isEndTimeSet()) {
             roundEndTime();
-        throwExceptionIfWrongTimeOrder();
+            throwExceptionIfWrongTimeOrder();
+        }
     }
     
     public void setStartTime(String startTime) {
         this.startTime = LocalTime.parse(startTime);
-        if (isEndTimeSet())
+        if (isEndTimeSet()) {
             roundEndTime();
-        throwExceptionIfWrongTimeOrder();
+            throwExceptionIfWrongTimeOrder();
+        }
     }
     
     public void setEndTime(LocalTime endTime) {
