@@ -1,5 +1,6 @@
 package timelogger;
 
+import java.time.LocalTime;
 import java.util.List;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -82,24 +83,65 @@ public class TLOG16RSController {
         
         @PutMapping("/timelogger/workmonths/workdays/tasks/finish")
         public Task addTaskFinish(@RequestBody FinishingTaskRB finishingTask) {
-            Task task = Service.FinishingTaskRBToTask(finishingTask);
+            Task taskInfo = Service.FinishingTaskRBToTask(finishingTask);
             
-            //TODO: finish method
+            int yearToAddTo = finishingTask.getYear();
+            int monthToAddTo = finishingTask.getMonth();
+            int dayToAddTo = finishingTask.getDay();
+            WorkMonth workmonthToSearch = Service.findWorkMonthOrCreateNew(
+                    timelogger, yearToAddTo, monthToAddTo);
+            WorkDay workdayToSearch = Service.findWorkDayOrCreateNew(
+                    workmonthToSearch, dayToAddTo);
+            Task taskToChange = Service.findTaskOrCreateNew(
+                    workdayToSearch, taskInfo);
             
-            return task;
+            taskToChange.setEndTime(finishingTask.getEndTime());
+            
+            return taskToChange;
         }
         
         @PutMapping("/timelogger/workmonths/workdays/tasks/modify")
-        public Task modifyTask(@RequestBody ModifyTaskRB taskToModify) {
-            Task task = Service.ModifyTaskRBToTask(taskToModify);
+        public Task modifyTask(@RequestBody ModifyTaskRB modifyTask) {
+            Task taskInfo = Service.ModifyTaskRBToTask(modifyTask);
             
-            //TODO: finish method
+            int yearToAddTo = modifyTask.getYear();
+            int monthToAddTo = modifyTask.getMonth();
+            int dayToAddTo = modifyTask.getDay();
+            WorkMonth workmonthToSearch = Service.findWorkMonthOrCreateNew(
+                    timelogger, yearToAddTo, monthToAddTo);
+            WorkDay workdayToSearch = Service.findWorkDayOrCreateNew(
+                    workmonthToSearch, dayToAddTo);
+            Task taskToChange = Service.findTaskOrCreateNew(
+                    workdayToSearch, taskInfo);
             
-            return task;
+            taskToChange.setTaskId(modifyTask.getNewTaskId());
+            taskToChange.setComment(modifyTask.getNewComment());
+            taskToChange.setTimes(modifyTask.getNewStartTime(), 
+                    modifyTask.getNewEndTime());
+            
+            return taskToChange;
         }
         
         @DeleteMapping("/timelogger/workmonths/workdays/tasks/delete")
-        public void deleteTask(@RequestBody DeleteTaskRB taskToDelete) {
-            //TODO: finish method
+        public void deleteTask(@RequestBody DeleteTaskRB deleteTask) {
+            int yearToSearch = deleteTask.getYear();
+            int monthToSearch = deleteTask.getMonth();
+            int dayToSearch = deleteTask.getDay();
+            LocalTime startTimeToSearch = LocalTime.parse(deleteTask.getStartTime());
+            String taskIdToSearch = deleteTask.getTaskId();
+            WorkMonth workmonthToSearch = Service.findWorkMonth(
+                    timelogger, yearToSearch, monthToSearch);
+            if (workmonthToSearch == null)
+                return;
+            WorkDay workdayToSearch = Service.findWorkDay(
+                    workmonthToSearch, dayToSearch);
+            if (workdayToSearch == null)
+                return;
+            Task taskToDelete = Service.findTask(
+                    workdayToSearch, startTimeToSearch, taskIdToSearch);
+            if (taskToDelete == null)
+                return;
+            
+            workdayToSearch.deleteTask(taskToDelete);
         }
 }

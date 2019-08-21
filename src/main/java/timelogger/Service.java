@@ -1,5 +1,7 @@
 package timelogger;
 
+import java.time.LocalTime;
+
 public class Service {
     public static WorkMonth WorkMonthRBToWorkMonth(WorkMonthRB workmonthRB) {
         WorkMonth workmonth = new WorkMonth(
@@ -55,7 +57,7 @@ public class Service {
         return foundWorkmonth;
     }
     
-    private static WorkMonth findWorkMonth(
+    public static WorkMonth findWorkMonth(
             TimeLogger timelogger, int yearToFind, int monthToFind) {
         WorkMonth foundWorkMonth = timelogger.getMonths().stream()
                         .filter(workMonth -> 
@@ -66,7 +68,7 @@ public class Service {
         return foundWorkMonth;
     }
     
-    private static WorkMonth createWorkMonthIfNull(
+    public static WorkMonth createWorkMonthIfNull(
             WorkMonth workmonthToCheck, int year, int month, 
             TimeLogger timelogger) {
         if (workmonthToCheck == null) {
@@ -91,7 +93,7 @@ public class Service {
         return foundWorkday;
     }
     
-    private static WorkDay findWorkDay(
+    public static WorkDay findWorkDay(
             WorkMonth workmonthToSearch, int dayToFind) {
         WorkDay foundWorkday = workmonthToSearch.getDays().stream()
                         .filter(workday -> 
@@ -101,7 +103,7 @@ public class Service {
         return foundWorkday;
     }
     
-    private static WorkDay createWorkDayIfNull(
+    public static WorkDay createWorkDayIfNull(
             WorkDay workdayToCheck, int year, int month, int day,
             WorkMonth workmonth) {
         if (workdayToCheck == null) {
@@ -110,6 +112,40 @@ public class Service {
         }
         return workdayToCheck;
     }
+    
+    
+    public static Task findTaskOrCreateNew(
+            WorkDay workdayToSearch, Task taskInfo) {
+        Task foundTask = Service.findTask(
+                workdayToSearch, taskInfo.getStartTime(), taskInfo.getTaskId());
+        
+        foundTask = Service.addTaskIfNull(
+                foundTask, taskInfo, workdayToSearch);
+        
+        return foundTask;
+    }
+    
+    public static Task findTask(
+            WorkDay workdayToSearch, LocalTime startTime, String taskId) {
+        Task foundTask = workdayToSearch.getTasks().stream()
+                .filter(task -> 
+                        task.getStartTime().equals(startTime) &&
+                        task.getTaskId().equals(taskId))
+                .findFirst()
+                .orElse(null);
+        return foundTask;
+    }
+    
+    public static Task addTaskIfNull(
+            Task taskToCheck, Task taskToAddIfNull,
+            WorkDay workday) {
+        if (taskToCheck == null) {
+            workday.addTask(taskToAddIfNull);
+            return taskToAddIfNull;
+        }
+        return taskToCheck;
+    }
+    
     
     
     public static boolean isWorkMonthDateSame(
