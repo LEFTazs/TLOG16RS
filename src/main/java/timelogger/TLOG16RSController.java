@@ -22,11 +22,8 @@ public class TLOG16RSController {
         @GetMapping("/timelogger/workmonths/{year}/{month}")
 	public WorkMonth listWorkmonth(
                 @PathVariable int year, @PathVariable int month) {
-                WorkMonth workmonthToList = 
-                        Service.getSpecifiedWorkMonthFromTimeLogger(
-                                timelogger, year, month);
-                workmonthToList = Service.createWorkMonthInTimeLoggerIfNull(
-                        workmonthToList, year, month, timelogger);
+                WorkMonth workmonthToList = Service.findWorkMonthOrCreateNew(
+                        timelogger, year, month);
 		return workmonthToList;
 	}
         
@@ -34,18 +31,11 @@ public class TLOG16RSController {
 	public WorkDay listWorkDay(
                 @PathVariable int year, @PathVariable int month, 
                 @PathVariable int day) {
-                WorkMonth foundWorkmonth = 
-                        Service.getSpecifiedWorkMonthFromTimeLogger(
-                                timelogger, year, month);
-        
-                foundWorkmonth = Service.createWorkMonthInTimeLoggerIfNull(
-                        foundWorkmonth, year, month, timelogger);
+                WorkMonth foundWorkmonth = Service.findWorkMonthOrCreateNew(
+                        timelogger, year, month);
 
-                WorkDay foundWorkDay = 
-                        Service.getSpecifiedWorkDayFromWorkMonth(foundWorkmonth, day);
-
-                foundWorkDay = Service.createWorkDayInWorkMonthIfNull(
-                        foundWorkDay, year, month, day, foundWorkmonth);
+                WorkDay foundWorkDay = Service.findWorkDayOrCreateNew(
+                        foundWorkmonth, day);
                 
 		return foundWorkDay;
 	}
@@ -54,7 +44,7 @@ public class TLOG16RSController {
 	public WorkMonth addWorkMonth(@RequestBody WorkMonthRB newWorkmonth) {
 		WorkMonth workmonth = Service.WorkMonthRBToWorkMonth(newWorkmonth);
                 
-		Service.addWorkMonthToTimeLogger(timelogger, workmonth);
+		timelogger.addMonth(workmonth);
                 
 		return workmonth;
 	}
@@ -63,7 +53,12 @@ public class TLOG16RSController {
 	public WorkDay addWorkDay(@RequestBody WorkDayRB newWorkday) {
 		WorkDay workday = Service.WorkDayRBToWorkDay(newWorkday);
 		
-                Service.addWorkDayToTimeLogger(timelogger, workday);
+                int yearToAddTo = newWorkday.getYear();
+                int monthToAddTo = newWorkday.getMonth();
+                WorkMonth workmonthToAddTo = Service.findWorkMonthOrCreateNew(
+                        timelogger, yearToAddTo, monthToAddTo);
+                
+                workmonthToAddTo.addWorkDay(workday);
                 
 		return workday;
 	}
@@ -72,12 +67,15 @@ public class TLOG16RSController {
 	public Task addTaskStart(@RequestBody StartTaskRB newStartTask) {
 		Task task = Service.StartTaskRBToTask(newStartTask);
 		
-                Service.addTaskToTimeLogger(
-                        timelogger, task, 
-                        newStartTask.getYear(), 
-                        newStartTask.getMonth(), 
-                        newStartTask.getDay()
-                );
+                int yearToAddTo = newStartTask.getYear();
+                int monthToAddTo = newStartTask.getMonth();
+                int dayToAddTo = newStartTask.getDay();
+                WorkMonth workmonthToAddTo = Service.findWorkMonthOrCreateNew(
+                        timelogger, yearToAddTo, monthToAddTo);
+                WorkDay workdayToAddTo = Service.findWorkDayOrCreateNew(
+                        workmonthToAddTo, dayToAddTo);
+                
+                workdayToAddTo.addTask(task);
                 
 		return task;
 	}

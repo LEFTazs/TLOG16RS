@@ -43,44 +43,30 @@ public class Service {
     
     
     
-    public static void addWorkMonthToTimeLogger(
-            TimeLogger timelogger, WorkMonth workmonth) {
-        timelogger.addMonth(workmonth);
+    
+    public static WorkMonth findWorkMonthOrCreateNew(
+            TimeLogger timeloggerToSearch, int yearToFind, int monthToFind) {
+        WorkMonth foundWorkmonth = Service.findWorkMonth(
+                timeloggerToSearch, yearToFind, monthToFind);
+        
+        foundWorkmonth = Service.createWorkMonthIfNull(
+                foundWorkmonth, yearToFind, monthToFind, timeloggerToSearch);
+        
+        return foundWorkmonth;
     }
     
-    public static void addWorkDayToTimeLogger(
-            TimeLogger timelogger, WorkDay workday) {
-        int yearToAddTo = workday.getActualDay().getYear();
-        int monthToAddTo = workday.getActualDay().getMonthValue();
-        WorkMonth foundWorkmonth = Service.getSpecifiedWorkMonthFromTimeLogger(
-                timelogger, yearToAddTo, monthToAddTo);
-        
-        foundWorkmonth = Service.createWorkMonthInTimeLoggerIfNull(
-                foundWorkmonth, yearToAddTo, monthToAddTo, timelogger);
-        
-        foundWorkmonth.addWorkDay(workday);
-    }
-    
-    public static WorkMonth getSpecifiedWorkMonthFromTimeLogger(
-            TimeLogger timelogger, int year, int month) {
+    private static WorkMonth findWorkMonth(
+            TimeLogger timelogger, int yearToFind, int monthToFind) {
         WorkMonth foundWorkMonth = timelogger.getMonths().stream()
-                        .filter(workMonth -> Service.isWorkMonthDateSame(
-                                workMonth, year, month)
-                        )
+                        .filter(workMonth -> 
+                                Service.isWorkMonthDateSame(
+                                        workMonth, yearToFind, monthToFind))
                         .findFirst()
                         .orElse(null);
         return foundWorkMonth;
     }
     
-    public static boolean isWorkMonthDateSame(
-            WorkMonth monthToCheck, int year, int month) {
-        int workMonthYear = monthToCheck.getDate().getYear();
-        int workMonthMonth = monthToCheck.getDate().getMonthValue();
-        
-        return year == workMonthYear && month == workMonthMonth;
-    }
-    
-    public static WorkMonth createWorkMonthInTimeLoggerIfNull(
+    private static WorkMonth createWorkMonthIfNull(
             WorkMonth workmonthToCheck, int year, int month, 
             TimeLogger timelogger) {
         if (workmonthToCheck == null) {
@@ -90,36 +76,32 @@ public class Service {
         return workmonthToCheck;
     }
     
-    public static void addTaskToTimeLogger(
-            TimeLogger timelogger, Task task, 
-            int year, int month, int day) {
-        WorkMonth foundWorkmonth = Service.getSpecifiedWorkMonthFromTimeLogger(
-                timelogger, year, month);
         
-        foundWorkmonth = Service.createWorkMonthInTimeLoggerIfNull(
-                foundWorkmonth, year, month, timelogger);
+    public static WorkDay findWorkDayOrCreateNew(
+            WorkMonth workmonthToSearch, int dayToFind) {
+        WorkDay foundWorkday = Service.findWorkDay(
+                workmonthToSearch, dayToFind);
         
-        WorkDay foundWorkDay = 
-                Service.getSpecifiedWorkDayFromWorkMonth(foundWorkmonth, day);
+        int workmonthYear = workmonthToSearch.getDate().getYear();
+        int workmonthMonth = workmonthToSearch.getDate().getMonthValue();
+        foundWorkday = Service.createWorkDayIfNull(
+                foundWorkday, workmonthYear, workmonthMonth, dayToFind, 
+                workmonthToSearch);
         
-        foundWorkDay = Service.createWorkDayInWorkMonthIfNull(
-                foundWorkDay, year, month, day, foundWorkmonth);
-                
-        foundWorkDay.addTask(task);
+        return foundWorkday;
     }
     
-    public static WorkDay getSpecifiedWorkDayFromWorkMonth(
-            WorkMonth workmonthToSearch, int day) {
-        WorkDay foundWorkDay = workmonthToSearch.getDays().stream()
+    private static WorkDay findWorkDay(
+            WorkMonth workmonthToSearch, int dayToFind) {
+        WorkDay foundWorkday = workmonthToSearch.getDays().stream()
                         .filter(workday -> 
-                                workday.getActualDay().getDayOfMonth() == day
-                        )
+                                workday.getActualDay().getDayOfMonth() == dayToFind)
                         .findFirst()
                         .orElse(null);
-        return foundWorkDay;
+        return foundWorkday;
     }
     
-    public static WorkDay createWorkDayInWorkMonthIfNull(
+    private static WorkDay createWorkDayIfNull(
             WorkDay workdayToCheck, int year, int month, int day,
             WorkMonth workmonth) {
         if (workdayToCheck == null) {
@@ -127,5 +109,14 @@ public class Service {
             workmonth.addWorkDay(workdayToCheck);
         }
         return workdayToCheck;
+    }
+    
+    
+    public static boolean isWorkMonthDateSame(
+            WorkMonth workmonthToCheck, int year, int month) {
+        int workMonthYear = workmonthToCheck.getDate().getYear();
+        int workMonthMonth = workmonthToCheck.getDate().getMonthValue();
+        
+        return year == workMonthYear && month == workMonthMonth;
     }
 }
