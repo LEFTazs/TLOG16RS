@@ -81,7 +81,7 @@ public class WorkDay {
      * @return LocalTime The latest task's endtime. 
      * If there are no tasks, null is returned.
      */
-    public LocalTime getLatestTaskEndTime() {
+    protected LocalTime getLatestTaskEndTime() {
         Task latestTask = tasks.stream()
                 .filter(task -> task.isEndTimeSet())
                 .max(Comparator.comparing(
@@ -129,11 +129,11 @@ public class WorkDay {
         return new ArrayList<>(tasks);
     }
     
-    public Task getUnfinishedTask(int index) {
+    protected Task getUnfinishedTask(int index) {
         return getUnfinishedTasks().get(index);
     }
     
-    public List<Task> getUnfinishedTasks() {
+    protected List<Task> getUnfinishedTasks() {
         List<Task> unfinishedTasks = tasks.stream()
                 .filter(task -> !task.isEndTimeSet())
                 .collect(Collectors.toList()

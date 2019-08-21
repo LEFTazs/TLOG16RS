@@ -64,7 +64,7 @@ public class Task {
      * Check if the task's id is a valid Redmine id or a valid LT id.
      * @return boolean Whether the task id is valid or not.
      */
-    public boolean isValidTaskId() {
+    protected boolean isValidTaskId() {
         return isValidRedmineTaskId() || isValidLTTaskId();
     }
     
@@ -112,11 +112,11 @@ public class Task {
     }
     
     
-    public boolean isStartTimeSet() {
+    protected boolean isStartTimeSet() {
         return this.startTime != null;
     }
     
-    public boolean isEndTimeSet() {
+    protected boolean isEndTimeSet() {
         return this.endTime != null;
     }
     
