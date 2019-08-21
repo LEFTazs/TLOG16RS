@@ -121,6 +121,10 @@ public class WorkDay {
         tasks.remove(index);
     }
     
+    public void deleteTask(Task task) {
+        tasks.remove(task);
+    }
+    
     public List<Task> getTasks() {
         return new ArrayList<>(tasks);
     }

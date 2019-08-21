@@ -167,6 +167,13 @@ public class Task {
         roundEndTime();
         throwExceptionIfWrongTimeOrder();
     }
+    
+    public void setTimes(String startTime, String endTime) {
+        this.startTime = LocalTime.parse(startTime);
+        this.endTime = LocalTime.parse(endTime);
+        roundEndTime();
+        throwExceptionIfWrongTimeOrder();
+    }
 
     @Override
     public String toString() {
