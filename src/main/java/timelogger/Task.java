@@ -168,9 +168,16 @@ public class Task {
         throwExceptionIfWrongTimeOrder();
     }
     
+    public void setTimes(LocalTime startTime, LocalTime endTime) {
+        this.startTime = startTime;
+        this.endTime = endTime;
+        roundEndTime();
+        throwExceptionIfWrongTimeOrder();
+    }
+    
     public void setTimes(String startTime, String endTime) {
-        this.startTime = LocalTime.parse(startTime);
-        this.endTime = LocalTime.parse(endTime);
+        this.setTimes(LocalTime.parse(startTime), 
+                LocalTime.parse(endTime));
         roundEndTime();
         throwExceptionIfWrongTimeOrder();
     }

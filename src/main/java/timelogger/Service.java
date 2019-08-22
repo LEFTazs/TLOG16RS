@@ -1,158 +1,223 @@
 package timelogger;
 
 import java.time.LocalTime;
+import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
-public class Service {
-    public static WorkMonth WorkMonthRBToWorkMonth(WorkMonthRB workmonthRB) {
-        WorkMonth workmonth = new WorkMonth(
-                        workmonthRB.getYear(), 
-                        workmonthRB.getMonth());
+@Slf4j
+public class Service extends ServiceBase {
+    
+    public static List<WorkMonth> listWorkmonths(TimeLogger timelogger) {
+        return timelogger.getMonths();
+    }
+    
+    
+    public static WorkMonth listWorkmonth(
+            TimeLogger timelogger, int year, int month) {
+        try {
+            return Service.tryListWorkmonth(timelogger, year, month);
+        } catch (Exception e) {
+            log.error(e.toString());
+            return null;
+        }
+    }
+    
+    public static WorkMonth tryListWorkmonth(
+            TimeLogger timelogger, int year, int month) {
+        WorkMonth workmonthToList = Service.findWorkMonthOrCreateNew(
+                timelogger, year, month);
+        return workmonthToList;
+    }
+    
+    
+    public static WorkDay listWorkDay(
+            TimeLogger timelogger, int year,  int month, int day) {
+        try {
+            return Service.tryListWorkDay(timelogger, year, month, day);
+        } catch (Exception e) {
+            log.error(e.toString());
+            return null;
+        }
+    }
+    
+    public static WorkDay tryListWorkDay(
+            TimeLogger timelogger, int year,  int month, int day) {
+        WorkMonth foundWorkmonth = Service.findWorkMonthOrCreateNew(
+                timelogger, year, month);
+
+        WorkDay foundWorkDay = Service.findWorkDayOrCreateNew(
+                foundWorkmonth, day);
+
+        return foundWorkDay;
+    }
+    
+    
+    public static WorkMonth addWorkMonth(
+            TimeLogger timelogger, WorkMonthRB newWorkmonth) {
+        try {
+            return Service.tryAddWorkMonth(timelogger, newWorkmonth);
+        } catch (Exception e) {
+            log.error(e.toString());
+            return null;
+        }
+    }
+    
+    public static WorkMonth tryAddWorkMonth(
+            TimeLogger timelogger, WorkMonthRB newWorkmonth) {
+        WorkMonth workmonth = Service.WorkMonthRBToWorkMonth(newWorkmonth);
+
+        timelogger.addMonth(workmonth);
+
         return workmonth;
     }
     
-    public static WorkDay WorkDayRBToWorkDay(WorkDayRB workdayRB) {
-        WorkDay workday = new WorkDay(workdayRB.getRequiredHours() * 60, 
-                        workdayRB.getYear(), 
-                        workdayRB.getMonth(), 
-                        workdayRB.getDay());
+    
+    public static WorkDay addWorkDay(
+            TimeLogger timelogger, WorkDayRB newWorkday) {
+        try {
+            return Service.tryAddWorkDay(timelogger, newWorkday);
+        } catch (Exception e) {
+            log.error(e.toString());
+            return null;
+        }
+    }
+    
+    public static WorkDay tryAddWorkDay(
+            TimeLogger timelogger, WorkDayRB newWorkday) {
+        WorkDay workday = Service.WorkDayRBToWorkDay(newWorkday);
+
+        int yearToAddTo = newWorkday.getYear();
+        int monthToAddTo = newWorkday.getMonth();
+        WorkMonth workmonthToAddTo = Service.findWorkMonthOrCreateNew(
+                timelogger, yearToAddTo, monthToAddTo);
+
+        workmonthToAddTo.addWorkDay(workday);
+
         return workday;
     }
     
-    public static Task StartTaskRBToTask(StartTaskRB startTaskRB) {
-        Task task = new Task(startTaskRB.getTaskId(),
-                        startTaskRB.getComment(),
-                        startTaskRB.getStartTime(),
-                        startTaskRB.getStartTime());
-        
+    
+    public static Task addTaskStart(
+            TimeLogger timelogger, StartTaskRB newStartTask) {
+        try {
+            return Service.tryAddTaskStart(timelogger, newStartTask);
+        } catch (Exception e) {
+            log.error(e.toString());
+            return null;
+        }
+    }
+    
+    public static Task tryAddTaskStart(
+            TimeLogger timelogger, StartTaskRB newStartTask) {
+        Task task = Service.StartTaskRBToTask(newStartTask);
+
+        int yearToAddTo = newStartTask.getYear();
+        int monthToAddTo = newStartTask.getMonth();
+        int dayToAddTo = newStartTask.getDay();
+        WorkMonth workmonthToAddTo = Service.findWorkMonthOrCreateNew(
+                timelogger, yearToAddTo, monthToAddTo);
+        WorkDay workdayToAddTo = Service.findWorkDayOrCreateNew(
+                workmonthToAddTo, dayToAddTo);
+
+        workdayToAddTo.addTask(task);
+
         return task;
     }
     
-    public static Task FinishingTaskRBToTask(FinishingTaskRB finishingTaskRB) {
-        Task task = new Task(finishingTaskRB.getTaskId());
-        task.setStartTime(finishingTaskRB.getStartTime());
-        task.setEndTime(finishingTaskRB.getEndTime());
-        
-        return task;
-    }
     
-    public static Task ModifyTaskRBToTask(ModifyTaskRB modifyTaskRB) {
-        Task task = new Task(modifyTaskRB.getTaskId());
-        task.setStartTime(modifyTaskRB.getStartTime());
-        task.setEndTime(modifyTaskRB.getStartTime());
-        
-        return task;
-    }
-    
-    
-    
-    
-    public static WorkMonth findWorkMonthOrCreateNew(
-            TimeLogger timeloggerToSearch, int yearToFind, int monthToFind) {
-        WorkMonth foundWorkmonth = Service.findWorkMonth(
-                timeloggerToSearch, yearToFind, monthToFind);
-        
-        foundWorkmonth = Service.createWorkMonthIfNull(
-                foundWorkmonth, yearToFind, monthToFind, timeloggerToSearch);
-        
-        return foundWorkmonth;
-    }
-    
-    public static WorkMonth findWorkMonth(
-            TimeLogger timelogger, int yearToFind, int monthToFind) {
-        WorkMonth foundWorkMonth = timelogger.getMonths().stream()
-                        .filter(workMonth -> 
-                                Service.isWorkMonthDateSame(
-                                        workMonth, yearToFind, monthToFind))
-                        .findFirst()
-                        .orElse(null);
-        return foundWorkMonth;
-    }
-    
-    public static WorkMonth createWorkMonthIfNull(
-            WorkMonth workmonthToCheck, int year, int month, 
-            TimeLogger timelogger) {
-        if (workmonthToCheck == null) {
-            workmonthToCheck = new WorkMonth(year, month);
-            timelogger.addMonth(workmonthToCheck);
+    public static Task addTaskFinish(
+            TimeLogger timelogger, FinishingTaskRB finishingTask) {
+        try {
+            return Service.tryAddTaskFinish(timelogger, finishingTask);
+        } catch (Exception e) {
+            log.error(e.toString());
+            return null;
         }
-        return workmonthToCheck;
     }
     
-        
-    public static WorkDay findWorkDayOrCreateNew(
-            WorkMonth workmonthToSearch, int dayToFind) {
-        WorkDay foundWorkday = Service.findWorkDay(
-                workmonthToSearch, dayToFind);
-        
-        int workmonthYear = workmonthToSearch.getDate().getYear();
-        int workmonthMonth = workmonthToSearch.getDate().getMonthValue();
-        foundWorkday = Service.createWorkDayIfNull(
-                foundWorkday, workmonthYear, workmonthMonth, dayToFind, 
-                workmonthToSearch);
-        
-        return foundWorkday;
+    public static Task tryAddTaskFinish(
+            TimeLogger timelogger, FinishingTaskRB finishingTask) {
+        Task taskInfo = Service.FinishingTaskRBToTask(finishingTask);
+
+        int yearToAddTo = finishingTask.getYear();
+        int monthToAddTo = finishingTask.getMonth();
+        int dayToAddTo = finishingTask.getDay();
+        WorkMonth workmonthToSearch = Service.findWorkMonthOrCreateNew(
+                timelogger, yearToAddTo, monthToAddTo);
+        WorkDay workdayToSearch = Service.findWorkDayOrCreateNew(
+                workmonthToSearch, dayToAddTo);
+        Task taskToChange = Service.findTaskOrCreateNew(
+                workdayToSearch, taskInfo);
+
+        taskToChange.setEndTime(finishingTask.getEndTime());
+
+        return taskToChange;
     }
     
-    public static WorkDay findWorkDay(
-            WorkMonth workmonthToSearch, int dayToFind) {
-        WorkDay foundWorkday = workmonthToSearch.getDays().stream()
-                        .filter(workday -> 
-                                workday.getActualDay().getDayOfMonth() == dayToFind)
-                        .findFirst()
-                        .orElse(null);
-        return foundWorkday;
-    }
     
-    public static WorkDay createWorkDayIfNull(
-            WorkDay workdayToCheck, int year, int month, int day,
-            WorkMonth workmonth) {
-        if (workdayToCheck == null) {
-            workdayToCheck = new WorkDay(year, month, day);
-            workmonth.addWorkDay(workdayToCheck);
+    public static Task modifyTask(
+            TimeLogger timelogger,  ModifyTaskRB modifyTask) {
+        try {
+            return Service.tryModifyTask(timelogger, modifyTask);
+        } catch (Exception e) {
+            log.error(e.toString());
+            return null;
         }
-        return workdayToCheck;
+    }
+    
+    public static Task tryModifyTask(
+            TimeLogger timelogger,  ModifyTaskRB modifyTask) {
+        Task taskInfo = Service.ModifyTaskRBToTask(modifyTask);
+        Task newTask = Service.ModifyTaskRBToNewTask(modifyTask);
+
+        int yearToAddTo = modifyTask.getYear();
+        int monthToAddTo = modifyTask.getMonth();
+        int dayToAddTo = modifyTask.getDay();
+        WorkMonth workmonthToSearch = Service.findWorkMonthOrCreateNew(
+                timelogger, yearToAddTo, monthToAddTo);
+        WorkDay workdayToSearch = Service.findWorkDayOrCreateNew(
+                workmonthToSearch, dayToAddTo);
+        Task taskToChange = Service.findTaskOrCreateNew(
+                workdayToSearch, taskInfo);
+
+        taskToChange.setTaskId(newTask.getTaskId());
+        taskToChange.setComment(newTask.getComment());
+        taskToChange.setTimes(newTask.getStartTime(), 
+                newTask.getEndTime());
+
+        return taskToChange;
     }
     
     
-    public static Task findTaskOrCreateNew(
-            WorkDay workdayToSearch, Task taskInfo) {
-        Task foundTask = Service.findTask(
-                workdayToSearch, taskInfo.getStartTime(), taskInfo.getTaskId());
-        
-        foundTask = Service.addTaskIfNull(
-                foundTask, taskInfo, workdayToSearch);
-        
-        return foundTask;
-    }
-    
-    public static Task findTask(
-            WorkDay workdayToSearch, LocalTime startTime, String taskId) {
-        Task foundTask = workdayToSearch.getTasks().stream()
-                .filter(task -> 
-                        task.getStartTime().equals(startTime) &&
-                        task.getTaskId().equals(taskId))
-                .findFirst()
-                .orElse(null);
-        return foundTask;
-    }
-    
-    public static Task addTaskIfNull(
-            Task taskToCheck, Task taskToAddIfNull,
-            WorkDay workday) {
-        if (taskToCheck == null) {
-            workday.addTask(taskToAddIfNull);
-            return taskToAddIfNull;
+    public static void deleteTask(
+            TimeLogger timelogger, DeleteTaskRB deleteTask) {
+        try {
+            Service.tryDeleteTask(timelogger, deleteTask);
+        } catch (Exception e) {
+            log.error(e.toString());
         }
-        return taskToCheck;
     }
     
-    
-    
-    public static boolean isWorkMonthDateSame(
-            WorkMonth workmonthToCheck, int year, int month) {
-        int workMonthYear = workmonthToCheck.getDate().getYear();
-        int workMonthMonth = workmonthToCheck.getDate().getMonthValue();
-        
-        return year == workMonthYear && month == workMonthMonth;
+    public static void tryDeleteTask(
+            TimeLogger timelogger, DeleteTaskRB deleteTask) {
+        int yearToSearch = deleteTask.getYear();
+        int monthToSearch = deleteTask.getMonth();
+        int dayToSearch = deleteTask.getDay();
+        LocalTime startTimeToSearch = LocalTime.parse(deleteTask.getStartTime());
+        String taskIdToSearch = deleteTask.getTaskId();
+        WorkMonth workmonthToSearch = Service.findWorkMonth(
+                timelogger, yearToSearch, monthToSearch);
+        if (workmonthToSearch == null)
+            return;
+        WorkDay workdayToSearch = Service.findWorkDay(
+                workmonthToSearch, dayToSearch);
+        if (workdayToSearch == null)
+            return;
+        Task taskToDelete = Service.findTask(
+                workdayToSearch, startTimeToSearch, taskIdToSearch);
+        if (taskToDelete == null)
+            return;
+
+        workdayToSearch.deleteTask(taskToDelete);
     }
 }
