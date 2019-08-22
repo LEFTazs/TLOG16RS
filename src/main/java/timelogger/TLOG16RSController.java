@@ -62,4 +62,9 @@ public class TLOG16RSController {
         public void deleteTask(@RequestBody DeleteTaskRB deleteTask) {
             Service.deleteTask(timelogger, deleteTask);
         }
+        
+        @DeleteMapping("/timelogger/workmonths/workdays/tasks/deleteall")
+        public void deleteAll() {
+            Service.deleteAll(timelogger);
+        }
 }

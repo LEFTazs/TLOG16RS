@@ -220,4 +220,9 @@ public class Service extends ServiceBase {
 
         workdayToSearch.deleteTask(taskToDelete);
     }
+    
+    
+    public static void deleteAll(TimeLogger timelogger) {
+        timelogger.deleteMonths();
+    }
 }

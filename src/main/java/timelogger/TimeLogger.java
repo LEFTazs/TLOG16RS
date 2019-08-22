@@ -50,6 +50,10 @@ public class TimeLogger {
         return new ArrayList<>(months);
     }
     
+    public void deleteMonths() {
+        months.clear();
+    }
+    
     /**
      * Print out this timelogger's months line-by-line.
      * Formatting is the following: {index}. {date}
