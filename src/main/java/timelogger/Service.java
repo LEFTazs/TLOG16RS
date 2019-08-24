@@ -12,35 +12,35 @@ public class Service extends ServiceBase {
     }
     
     
-    public static WorkMonth listWorkmonth(
+    public static List<WorkDay> listWorkmonthDays(
             TimeLogger timelogger, int year, int month) {
         try {
-            return Service.tryListWorkmonth(timelogger, year, month);
+            return Service.tryListWorkmonthDays(timelogger, year, month);
         } catch (Exception e) {
             log.error(e.toString());
             return null;
         }
     }
     
-    public static WorkMonth tryListWorkmonth(
+    public static List<WorkDay> tryListWorkmonthDays(
             TimeLogger timelogger, int year, int month) {
-        WorkMonth workmonthToList = Service.findWorkMonthOrCreateNew(
+        WorkMonth foundWorkMonth = Service.findWorkMonthOrCreateNew(
                 timelogger, year, month);
-        return workmonthToList;
+        return foundWorkMonth.getDays();
     }
     
     
-    public static WorkDay listWorkDay(
+    public static List<Task> listWorkDayTasks(
             TimeLogger timelogger, int year,  int month, int day) {
         try {
-            return Service.tryListWorkDay(timelogger, year, month, day);
+            return Service.tryListWorkDayTasks(timelogger, year, month, day);
         } catch (Exception e) {
             log.error(e.toString());
             return null;
         }
     }
     
-    public static WorkDay tryListWorkDay(
+    public static List<Task> tryListWorkDayTasks(
             TimeLogger timelogger, int year,  int month, int day) {
         WorkMonth foundWorkmonth = Service.findWorkMonthOrCreateNew(
                 timelogger, year, month);
@@ -48,7 +48,7 @@ public class Service extends ServiceBase {
         WorkDay foundWorkDay = Service.findWorkDayOrCreateNew(
                 foundWorkmonth, day);
 
-        return foundWorkDay;
+        return foundWorkDay.getTasks();
     }
     
     
