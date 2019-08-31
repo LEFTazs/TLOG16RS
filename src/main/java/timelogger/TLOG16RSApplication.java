@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Bean;
 public class TLOG16RSApplication {
 
     public static void main(String[] args) {
-        CreateDatabase createDatabase = new CreateDatabase();
         SpringApplication.run(TLOG16RSApplication.class, args);
     }
     

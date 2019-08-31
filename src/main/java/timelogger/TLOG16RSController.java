@@ -78,7 +78,7 @@ public class TLOG16RSController {
         }
         
         @PostMapping("timelogger/save/test")
-        public String saveTest(String text) {
+        public String saveTest(@RequestBody String text) {
             TestEntity testEntity = new TestEntity();
             testEntity.setText(text);
             persistencyServer.save(testEntity);
