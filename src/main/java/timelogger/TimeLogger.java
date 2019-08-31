@@ -54,13 +54,4 @@ public class TimeLogger {
         months.clear();
     }
     
-    /**
-     * Print out this timelogger's months line-by-line.
-     * Formatting is the following: {index}. {date}
-     */
-    public void printMonths() {
-        for (int i = 0; i < months.size(); i++) {
-            System.out.printf("%d. %s\n", i + 1, months.get(i).getDate());
-        }
-    }
 }

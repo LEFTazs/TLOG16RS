@@ -11,6 +11,11 @@ import timelogger.exceptions.*;
  * Utility functions for the timelogger package.
  */
 public class Util {
+    
+    private Util() {
+        throw new IllegalStateException("Utility class");
+    }
+    
     /**
      * Round the given interval, so that it's length is a multiple of a quarter hour.
      * The starttime will not be rounded, only the endtime.

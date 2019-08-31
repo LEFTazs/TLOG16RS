@@ -4,6 +4,10 @@ import java.time.LocalTime;
 
 public class ServiceBase {
     
+    protected ServiceBase() {
+      throw new IllegalStateException("Service class");
+    }
+    
     protected static WorkMonth WorkMonthRBToWorkMonth(WorkMonthRB workmonthRB) {
         WorkMonth workmonth = new WorkMonth(
                 workmonthRB.getYear(), 
@@ -13,7 +17,7 @@ public class ServiceBase {
 
     protected static WorkDay WorkDayRBToWorkDay(WorkDayRB workdayRB) {
         WorkDay workday = new WorkDay(
-                workdayRB.getRequiredHours() * 60, 
+                (long)workdayRB.getRequiredHours() * 60, 
                 workdayRB.getYear(), 
                 workdayRB.getMonth(), 
                 workdayRB.getDay());

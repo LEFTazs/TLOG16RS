@@ -1,6 +1,7 @@
 package timelogger;
 
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,7 +19,7 @@ public class Service extends ServiceBase {
             return Service.tryListWorkmonthDays(timelogger, year, month);
         } catch (Exception e) {
             log.error(e.toString());
-            return null;
+            return new ArrayList<>();
         }
     }
     
@@ -36,7 +37,7 @@ public class Service extends ServiceBase {
             return Service.tryListWorkDayTasks(timelogger, year, month, day);
         } catch (Exception e) {
             log.error(e.toString());
-            return null;
+            return new ArrayList<>();
         }
     }
     

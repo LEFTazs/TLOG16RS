@@ -134,13 +134,4 @@ public class WorkMonth {
                 .sum();
     }
     
-    /**
-     * Print out this month's days line-by-line.
-     * Formatting is the following: {index}. {date}
-     */
-    public void printDays() {
-        for (int i = 0; i < days.size(); i++) {
-            System.out.printf("%d. %s\n", i + 1, days.get(i).getActualDay());
-        }
-    }
 }

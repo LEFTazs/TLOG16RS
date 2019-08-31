@@ -49,9 +49,6 @@ public class WorkDay {
     }
     
 
-    private boolean isFutureDate(LocalDate date) {
-        return date.isAfter(LocalDate.now());
-    }
     
     /**
      * How many extra minutes are there for this day.
@@ -96,9 +93,9 @@ public class WorkDay {
     }
     
     private long localTimeToLong(LocalTime localTime) {
-        int hours = localTime.getHour();
-        int mins = localTime.getMinute();
-        int seconds = localTime.getSecond();
+        long hours = (long)localTime.getHour();
+        long mins = (long)localTime.getMinute();
+        long seconds = (long)localTime.getSecond();
         
         return hours * 60 * 60 + mins * 60 + seconds;
     } 
@@ -171,28 +168,4 @@ public class WorkDay {
                 .sum();
     }
     
-    /**
-     * Print out this day's tasks line-by-line.
-     * Formatting is the following: {index}. {task_object}
-     */
-    public void printTasks() {
-        for (int i = 0; i < tasks.size(); i++) {
-            System.out.printf("%d. %s\n", i + 1, tasks.get(i));
-        }
-    }
-    
-    /**
-     * Print out this day's unfinished tasks line-by-line.
-     * Tasks are unfinished if their endtime is null.
-     * Formatting is the following: {index}. {task_object}
-     */
-    public void printUnfinishedTasks() {
-        int j = 1;
-        for (int i = 0; i < tasks.size(); i++) {
-            if (!tasks.get(i).isEndTimeSet()) {
-                System.out.printf("%d. %s\n", j, tasks.get(i));
-                j++;
-            }
-        }
-    }
 }
