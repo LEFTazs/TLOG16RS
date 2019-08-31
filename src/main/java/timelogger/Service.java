@@ -65,7 +65,7 @@ public class Service extends ServiceBase {
     
     public static WorkMonth tryAddWorkMonth(
             TimeLogger timelogger, WorkMonthRB newWorkmonth) {
-        WorkMonth workmonth = Service.WorkMonthRBToWorkMonth(newWorkmonth);
+        WorkMonth workmonth = Service.workMonthRBToWorkMonth(newWorkmonth);
 
         timelogger.addMonth(workmonth);
 
@@ -85,7 +85,7 @@ public class Service extends ServiceBase {
     
     public static WorkDay tryAddWorkDay(
             TimeLogger timelogger, WorkDayRB newWorkday) {
-        WorkDay workday = Service.WorkDayRBToWorkDay(newWorkday);
+        WorkDay workday = Service.workDayRBToWorkDay(newWorkday);
 
         int yearToAddTo = newWorkday.getYear();
         int monthToAddTo = newWorkday.getMonth();
@@ -110,7 +110,7 @@ public class Service extends ServiceBase {
     
     public static Task tryAddTaskStart(
             TimeLogger timelogger, StartTaskRB newStartTask) {
-        Task task = Service.StartTaskRBToTask(newStartTask);
+        Task task = Service.startTaskRBToTask(newStartTask);
 
         int yearToAddTo = newStartTask.getYear();
         int monthToAddTo = newStartTask.getMonth();
@@ -138,7 +138,7 @@ public class Service extends ServiceBase {
     
     public static Task tryAddTaskFinish(
             TimeLogger timelogger, FinishingTaskRB finishingTask) {
-        Task taskInfo = Service.FinishingTaskRBToTask(finishingTask);
+        Task taskInfo = Service.finishingTaskRBToTask(finishingTask);
 
         int yearToAddTo = finishingTask.getYear();
         int monthToAddTo = finishingTask.getMonth();
@@ -168,8 +168,8 @@ public class Service extends ServiceBase {
     
     public static Task tryModifyTask(
             TimeLogger timelogger,  ModifyTaskRB modifyTask) {
-        Task taskInfo = Service.ModifyTaskRBToTask(modifyTask);
-        Task newTask = Service.ModifyTaskRBToNewTask(modifyTask);
+        Task taskInfo = Service.modifyTaskRBToTask(modifyTask);
+        Task newTask = Service.modifyTaskRBToNewTask(modifyTask);
 
         int yearToAddTo = modifyTask.getYear();
         int monthToAddTo = modifyTask.getMonth();

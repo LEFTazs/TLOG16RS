@@ -8,50 +8,46 @@ public class ServiceBase {
       throw new IllegalStateException("Service class");
     }
     
-    protected static WorkMonth WorkMonthRBToWorkMonth(WorkMonthRB workmonthRB) {
-        WorkMonth workmonth = new WorkMonth(
+    protected static WorkMonth workMonthRBToWorkMonth(WorkMonthRB workmonthRB) {
+        return new WorkMonth(
                 workmonthRB.getYear(), 
                 workmonthRB.getMonth());
-        return workmonth;
     }
 
-    protected static WorkDay WorkDayRBToWorkDay(WorkDayRB workdayRB) {
-        WorkDay workday = new WorkDay(
+    protected static WorkDay workDayRBToWorkDay(WorkDayRB workdayRB) {
+        return new WorkDay(
                 (long)workdayRB.getRequiredHours() * 60, 
                 workdayRB.getYear(), 
                 workdayRB.getMonth(), 
                 workdayRB.getDay());
-        return workday;
     }
 
-    protected static Task StartTaskRBToTask(StartTaskRB startTaskRB) {
-        Task task = new Task(
+    protected static Task startTaskRBToTask(StartTaskRB startTaskRB) {
+        return new Task(
                 startTaskRB.getTaskId(), 
                 startTaskRB.getComment(), 
                 startTaskRB.getStartTime(), 
                 startTaskRB.getStartTime());
-        return task;
     }
 
-    protected static Task FinishingTaskRBToTask(FinishingTaskRB finishingTaskRB) {
+    protected static Task finishingTaskRBToTask(FinishingTaskRB finishingTaskRB) {
         Task task = new Task(finishingTaskRB.getTaskId());
         task.setTimes(finishingTaskRB.getStartTime(), 
                 finishingTaskRB.getEndTime());
         return task;
     }
 
-    protected static Task ModifyTaskRBToTask(ModifyTaskRB modifyTaskRB) {
+    protected static Task modifyTaskRBToTask(ModifyTaskRB modifyTaskRB) {
         Task task = new Task(modifyTaskRB.getTaskId());
         task.setTimes(modifyTaskRB.getStartTime(), modifyTaskRB.getStartTime());
         return task;
     }
     
-    protected static Task ModifyTaskRBToNewTask(ModifyTaskRB modifyTaskRB) {
-        Task task = new Task(modifyTaskRB.getNewTaskId(), 
+    protected static Task modifyTaskRBToNewTask(ModifyTaskRB modifyTaskRB) {
+        return new Task(modifyTaskRB.getNewTaskId(), 
                 modifyTaskRB.getNewComment(), 
                 modifyTaskRB.getNewStartTime(), 
                 modifyTaskRB.getNewEndTime());
-        return task;
     }
 
     protected static WorkMonth findWorkMonthOrCreateNew(
@@ -65,13 +61,12 @@ public class ServiceBase {
 
     protected static WorkMonth findWorkMonth(
             TimeLogger timelogger, int yearToFind, int monthToFind) {
-        WorkMonth foundWorkMonth = timelogger.getMonths().stream()
-                .filter((workMonth) -> 
+        return timelogger.getMonths().stream()
+                .filter(workMonth -> 
                         Service.isWorkMonthDateSame(
                                 workMonth, yearToFind, monthToFind))
                 .findFirst()
                 .orElse(null);
-        return foundWorkMonth;
     }
 
     protected static WorkMonth createWorkMonthIfNull(
@@ -98,12 +93,11 @@ public class ServiceBase {
 
     protected static WorkDay findWorkDay(
             WorkMonth workmonthToSearch, int dayToFind) {
-        WorkDay foundWorkday = workmonthToSearch.getDays().stream()
-                .filter((workday) -> 
+        return workmonthToSearch.getDays().stream()
+                .filter(workday -> 
                         workday.getActualDay().getDayOfMonth() == dayToFind)
                 .findFirst()
                 .orElse(null);
-        return foundWorkday;
     }
 
     protected static WorkDay createWorkDayIfNull(
@@ -127,13 +121,12 @@ public class ServiceBase {
 
     protected static Task findTask(
             WorkDay workdayToSearch, LocalTime startTime, String taskId) {
-        Task foundTask = workdayToSearch.getTasks().stream()
-                .filter((task) -> 
+        return workdayToSearch.getTasks().stream()
+                .filter(task -> 
                         task.getStartTime().equals(startTime) && 
                                 task.getTaskId().equals(taskId))
                 .findFirst()
                 .orElse(null);
-        return foundTask;
     }
 
     protected static Task addTaskIfNull(

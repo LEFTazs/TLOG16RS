@@ -80,7 +80,7 @@ public class WorkDay {
      */
     protected LocalTime getLatestTaskEndTime() {
         Task latestTask = tasks.stream()
-                .filter(task -> task.isEndTimeSet())
+                .filter(Task::isEndTimeSet)
                 .max(Comparator.comparing(
                         task -> localTimeToLong(task.getEndTime()))
                 )
@@ -131,11 +131,10 @@ public class WorkDay {
     }
     
     protected List<Task> getUnfinishedTasks() {
-        List<Task> unfinishedTasks = tasks.stream()
+        return tasks.stream()
                 .filter(task -> !task.isEndTimeSet())
                 .collect(Collectors.toList()
                 );
-        return unfinishedTasks;
     }
     
     public void setRequiredMinPerDay(long requiredMinPerDay) {
@@ -164,7 +163,7 @@ public class WorkDay {
     
     private void updateSumPerDay() {
         sumPerDay = tasks.stream()
-                .mapToLong(task -> task.getMinPerTask())
+                .mapToLong(Task::getMinPerTask)
                 .sum();
     }
     
