@@ -26,7 +26,26 @@ targetCompatibility = 1.8
 dependencies {
     compile("org.springframework.boot:spring-boot-starter-web")
     testCompile('org.springframework.boot:spring-boot-starter-test')
-	compileOnly('org.projectlombok:lombok:1.18.8')
-	annotationProcessor('org.projectlombok:lombok:1.18.8')
+    
+    compileOnly('org.projectlombok:lombok:1.18.8')
+    annotationProcessor('org.projectlombok:lombok:1.18.8')
+    
+    compile group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: '2.4.3'
+    compile group: 'org.avaje.ebeanorm', name: 'avaje-ebeanorm', version: '8.1.1'
+    compile group: 'org.avaje.ebeanorm', name: 'avaje-ebeanorm-agent', version: '8.1.1'
+    
+    
 }
 
+
+classes.doLast {
+    javaexec { // Ebean enchancement
+        classpath = sourceSets.main.compileClasspath
+        main = 'com.avaje.ebean.enhance.ant.MainTransform'
+        args = [
+                compileJava.destinationDir,
+                'timelogger.entities',
+                'debug=1'
+        ]
+    }
+}

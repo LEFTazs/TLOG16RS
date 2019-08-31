@@ -1,7 +1,9 @@
 package timelogger;
 
+import com.avaje.ebean.EbeanServer;
 import java.time.LocalTime;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,10 +14,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import timelogger.entities.TestEntity;
 
 @RestController
 public class TLOG16RSController {
 	TimeLogger timelogger = new TimeLogger();
+        
+        @Autowired
+        private EbeanServer persistencyServer;
 
 	@GetMapping("/timelogger/workmonths")
 	public List<WorkMonth> listWorkmonths() {
@@ -69,5 +75,13 @@ public class TLOG16RSController {
         @ResponseStatus(HttpStatus.NO_CONTENT)
         public void deleteAll() {
             Service.deleteAll(timelogger);
+        }
+        
+        @PostMapping("timelogger/save/test")
+        public String saveTest(String text) {
+            TestEntity testEntity = new TestEntity();
+            testEntity.setText(text);
+            persistencyServer.save(testEntity);
+            return testEntity.getText();
         }
 }
