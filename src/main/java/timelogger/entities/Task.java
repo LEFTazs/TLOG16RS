@@ -1,16 +1,21 @@
-package timelogger;
+package timelogger.entities;
 
 import java.time.LocalTime;
+import timelogger.Util;
 import static java.time.temporal.ChronoUnit.MINUTES;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import timelogger.exceptions.*;
 
 /**
  * A task is a duration of time, with an assigned indentifier.
  * Additionally, a comment can be added for the task.
  */
+@Entity
 @lombok.Getter
 @lombok.Setter
 public class Task {
+    @Id private int id;
     private String taskId;
     private String comment;
     private LocalTime startTime;
@@ -115,7 +120,7 @@ public class Task {
         return this.startTime != null;
     }
     
-    protected boolean isEndTimeSet() {
+    public boolean isEndTimeSet() {
         return this.endTime != null;
     }
     

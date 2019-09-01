@@ -1,4 +1,4 @@
-package timelogger;
+package timelogger.entities;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -6,13 +6,22 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import timelogger.Util;
 import timelogger.exceptions.*;
 
 /**
  * Tracks tasks. Contains statistics of these tasks.
  */
+@Entity
 @lombok.Getter
 public class WorkDay {
+    @lombok.Setter @Id private int id;
+    @OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY)
     private List<Task> tasks;
     private long requiredMinPerDay;
     private LocalDate actualDay;

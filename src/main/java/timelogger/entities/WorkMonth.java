@@ -1,22 +1,33 @@
-package timelogger;
+package timelogger.entities;
 
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import timelogger.Util;
 import timelogger.exceptions.*;
 
 /**
  * Tracks tasks through days. Contains statistics of these days.
  */
+@Entity
 @lombok.Getter
 public class WorkMonth {
+    @lombok.Setter @Id int id;
+    @OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY)
     private List<WorkDay> days;
-    private YearMonth date;
+    private transient YearMonth date;
+    private String dateString;
     private long sumPerMonth;
     private long requiredMinPerMonth;
     
     public WorkMonth(int year, int month) {
         this.date = YearMonth.of(year, month);
+        this.dateString = this.date.toString();
         this.days = new ArrayList<>();
     }
     

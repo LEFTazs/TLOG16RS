@@ -1,10 +1,62 @@
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 <changeSet id="1" author="LEFTazs">
-	<createTable tableName="test_entity">
+    
+	<createTable tableName="time_logger">
 		<column name="id" autoIncrement="true" type="int">
 			<constraints primaryKey="true" nullable="false"/>
 		</column>
-		<column name="text" type="varchar(255)"/>
 	</createTable>
+        
+	<createTable tableName="work_month">
+		<column name="id" autoIncrement="true" type="int">
+			<constraints primaryKey="true" nullable="false"/>
+		</column>
+		<column name="time_logger_id" type="int"/>
+                <column name="sum_per_month" type="long"/>
+                <column name="required_min_per_month" type="long"/>
+                <column name="extra_min_per_month" type="long"/>
+                <column name="date_string" type="varchar(255)"/>
+	</createTable>
+        
+        <createTable tableName="work_day">
+		<column name="id" autoIncrement="true" type="int">
+			<constraints primaryKey="true" nullable="false"/>
+		</column>
+		<column name="work_month_id" type="int"/>
+                <column name="required_min_per_day" type="long"/>
+                <column name="extra_min_per_day" type="long"/>
+                <column name="actual_day" type="date"/>
+                <column name="sum_per_day" type="long"/>
+	</createTable>
+        
+        <createTable tableName="task">
+		<column name="id" autoIncrement="true" type="int">
+			<constraints primaryKey="true" nullable="false"/>
+		</column>
+		<column name="work_day_id" type="int"/>
+                <column name="task_id" type="varchar(255)"/>
+                <column name="start_time" type="time"/>
+                <column name="end_time" type="time"/>
+                <column name="comment" type="varchar(255)"/>
+                <column name="min_per_task" type="long"/>
+	</createTable>
+        
+</changeSet>
+<changeSet id="addForeignKeyConstraint" author="LEFTazs">
+    <addForeignKeyConstraint baseColumnNames="time_logger_id"
+            baseTableName="work_month"
+            constraintName="fk_work_month"
+            referencedColumnNames="id"
+            referencedTableName="time_logger"/>
+    <addForeignKeyConstraint baseColumnNames="work_month_id"
+            baseTableName="work_day"
+            constraintName="fk_work_day"
+            referencedColumnNames="id"
+            referencedTableName="work_month"/>
+    <addForeignKeyConstraint baseColumnNames="work_day_id"
+            baseTableName="task"
+            constraintName="fk_task"
+            referencedColumnNames="id"
+            referencedTableName="work_day"/>
 </changeSet>
 </databaseChangeLog>

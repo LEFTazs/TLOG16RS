@@ -1,5 +1,7 @@
 package timelogger;
 
+import timelogger.entities.WorkDay;
+import timelogger.entities.Task;
 import java.time.LocalTime;
 import java.time.DayOfWeek;
 import static java.time.temporal.ChronoUnit.MINUTES;

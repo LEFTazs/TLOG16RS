@@ -1,5 +1,9 @@
 package timelogger;
 
+import timelogger.entities.WorkDay;
+import timelogger.entities.WorkMonth;
+import timelogger.entities.Task;
+import timelogger.entities.TimeLogger;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;

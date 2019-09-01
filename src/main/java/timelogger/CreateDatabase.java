@@ -7,6 +7,7 @@ import com.avaje.ebean.config.ServerConfig;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Arrays;
 import liquibase.Contexts;
 import liquibase.LabelExpression;
 import liquibase.Liquibase;
@@ -16,7 +17,7 @@ import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.LiquibaseException;
 import liquibase.resource.FileSystemResourceAccessor;
 import lombok.extern.slf4j.Slf4j;
-import timelogger.entities.TestEntity;
+import timelogger.entities.*;
 
 @Slf4j
 public class CreateDatabase {
@@ -51,7 +52,8 @@ public class CreateDatabase {
         serverConfig.setDdlRun(false);
         serverConfig.setRegister(true);
         serverConfig.setDataSourceConfig(this.dataSourceConfig);
-        serverConfig.addClass(TestEntity.class);
+        serverConfig.setClasses(Arrays.asList(
+                Task.class, WorkDay.class, WorkMonth.class, TimeLogger.class));
         serverConfig.setDefaultServer(true);
         this.serverConfig = serverConfig;
     }

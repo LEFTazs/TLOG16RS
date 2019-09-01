@@ -1,5 +1,6 @@
 package timelogger;
 
+import timelogger.entities.*;
 import com.avaje.ebean.Ebean;
 import java.util.List;
 import org.springframework.http.HttpStatus;
@@ -11,7 +12,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import timelogger.entities.TestEntity;
 
 @RestController
 public class TLOG16RSController {
@@ -72,11 +72,10 @@ public class TLOG16RSController {
             Service.deleteAll(timelogger);
         }
         
-        @PostMapping("timelogger/save/test")
-        public String saveTest(@RequestBody String text) {
-            TestEntity testEntity = new TestEntity();
-            testEntity.setText(text);
-            Ebean.save(testEntity);
-            return testEntity.getText();
+        @PutMapping("*")
+        public TimeLogger saveTest() {
+            Ebean.save(timelogger);
+            return timelogger;
         }
+        
 }

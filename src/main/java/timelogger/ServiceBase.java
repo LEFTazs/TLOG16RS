@@ -1,5 +1,6 @@
 package timelogger;
 
+import timelogger.entities.*;
 import java.time.LocalTime;
 
 public class ServiceBase {

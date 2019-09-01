@@ -1,13 +1,22 @@
-package timelogger;
+package timelogger.entities;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import timelogger.exceptions.*;
 
 /**
  * Tracks added tasks through months and days.
  */
+@Entity
 public class TimeLogger {
+    @lombok.Getter @lombok.Setter
+    @Id int id;
+    @OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY)
     private List<WorkMonth> months;
 
     public TimeLogger() {
