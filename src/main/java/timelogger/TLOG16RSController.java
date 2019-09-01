@@ -1,16 +1,13 @@
 package timelogger;
 
-import com.avaje.ebean.EbeanServer;
-import java.time.LocalTime;
+import com.avaje.ebean.Ebean;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,9 +17,7 @@ import timelogger.entities.TestEntity;
 public class TLOG16RSController {
 	TimeLogger timelogger = new TimeLogger();
         
-        @Autowired
-        private EbeanServer persistencyServer;
-
+        
 	@GetMapping("/timelogger/workmonths")
 	public List<WorkMonth> listWorkmonths() {
             return Service.listWorkmonths(timelogger);
@@ -81,7 +76,7 @@ public class TLOG16RSController {
         public String saveTest(@RequestBody String text) {
             TestEntity testEntity = new TestEntity();
             testEntity.setText(text);
-            persistencyServer.save(testEntity);
+            Ebean.save(testEntity);
             return testEntity.getText();
         }
 }

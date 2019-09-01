@@ -37,9 +37,6 @@ dependencies {
     compile 'org.liquibase:liquibase-core:3.3.5'
 }
 
-bootRun {
-    systemProperties = System.properties
-}
 
 classes.doLast {
     javaexec { // Ebean enchancement

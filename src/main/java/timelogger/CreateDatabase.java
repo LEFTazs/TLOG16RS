@@ -7,7 +7,6 @@ import com.avaje.ebean.config.ServerConfig;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Properties;
 import liquibase.Contexts;
 import liquibase.LabelExpression;
 import liquibase.Liquibase;
@@ -21,49 +20,62 @@ import timelogger.entities.TestEntity;
 
 @Slf4j
 public class CreateDatabase {
+    private DataSourceConfig dataSourceConfig;
+    private ServerConfig serverConfig;
     @lombok.Getter
     private EbeanServer ebeanServer;
     
-    public CreateDatabase() {
-        this.updateSchema();
+    public CreateDatabase(TLOG16RSConfiguration config) {
+        updateSchema(config);
         
-        DataSourceConfig dataSourceConfig = new DataSourceConfig();
-        dataSourceConfig.setDriver("org.mariadb.jdbc.Driver");
-        dataSourceConfig.setUrl("jdbc:mariadb://127.0.0.1:9001/timelogger"); //timelogger will be the name of the database
-        dataSourceConfig.setUsername( "timelogger");
-        dataSourceConfig.setPassword("633Ym2aZ5b9Wtzh4EJc4pANx");
+        initDataSourceConfig(config);
         
-        ServerConfig serverConfig = new ServerConfig();
-        serverConfig.setName("timelogger");
-        serverConfig.setDdlGenerate(false);
-        serverConfig.setDdlRun(false); //if the last 2 property is true, the database will be generated automatically
-        serverConfig.setRegister(true);
-        serverConfig.setDataSourceConfig(dataSourceConfig);
-        serverConfig.addClass(TestEntity.class); // (Now it is only the TestEntity, but here you can add the list of the annotated classes)
-        serverConfig.setDefaultServer(true);
+        initServerConfig(config);
 
-        EbeanServer ebeanServer = EbeanServerFactory.create(serverConfig);
+        initServer();
+    }
+    
+    private void initDataSourceConfig(TLOG16RSConfiguration config) {
+        DataSourceConfig dataSourceConfig = new DataSourceConfig();
+        dataSourceConfig.setDriver(config.getDriver());
+        dataSourceConfig.setUrl(config.getUrl());
+        dataSourceConfig.setUsername(config.getUsr());
+        dataSourceConfig.setPassword(config.getPassword());
+        this.dataSourceConfig = dataSourceConfig;
+    }
+    
+    private void initServerConfig(TLOG16RSConfiguration config) {
+        ServerConfig serverConfig = new ServerConfig();
+        serverConfig.setName(config.getUsr());
+        serverConfig.setDdlGenerate(false);
+        serverConfig.setDdlRun(false);
+        serverConfig.setRegister(true);
+        serverConfig.setDataSourceConfig(this.dataSourceConfig);
+        serverConfig.addClass(TestEntity.class);
+        serverConfig.setDefaultServer(true);
+        this.serverConfig = serverConfig;
+    }
+    
+    private void initServer() {
+        EbeanServer ebeanServer = EbeanServerFactory.create(this.serverConfig);
         
         this.ebeanServer = ebeanServer;
     }
     
-    private void updateSchema() {
+    private void updateSchema(TLOG16RSConfiguration config) {
         try {
             Connection connection = DriverManager.getConnection(
-                    System.getProperty("url"),
-                    //"jdbc:mariadb://127.0.0.1:9001/timelogger",
-                    System.getProperty("username"),
-                    //"timelogger", 
-                    System.getProperty("password")
-                    //"633Ym2aZ5b9Wtzh4EJc4pANx");
-                    );
+                    config.getUrl(),
+                    config.getUsr(),
+                    config.getPassword()
+            );
             Database database = DatabaseFactory.getInstance()
                     .findCorrectDatabaseImplementation(new JdbcConnection(connection));
             Liquibase liquibase = new Liquibase(
-                    System.getProperty("config"),
-                    //".\\src\\main\\resources\\migrations.xml", 
+                    config.getConfigfile(),
                     new FileSystemResourceAccessor(), 
-                    database);
+                    database
+            );
             liquibase.update(new Contexts(), new LabelExpression());
         } catch (LiquibaseException | SQLException e) {
             log.error(e.getLocalizedMessage());
