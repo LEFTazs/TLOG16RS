@@ -1,6 +1,7 @@
 package timelogger;
 
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,7 +19,7 @@ public class Service extends ServiceBase {
             return Service.tryListWorkmonthDays(timelogger, year, month);
         } catch (Exception e) {
             log.error(e.toString());
-            return null;
+            return new ArrayList<>();
         }
     }
     
@@ -36,7 +37,7 @@ public class Service extends ServiceBase {
             return Service.tryListWorkDayTasks(timelogger, year, month, day);
         } catch (Exception e) {
             log.error(e.toString());
-            return null;
+            return new ArrayList<>();
         }
     }
     
@@ -64,7 +65,7 @@ public class Service extends ServiceBase {
     
     public static WorkMonth tryAddWorkMonth(
             TimeLogger timelogger, WorkMonthRB newWorkmonth) {
-        WorkMonth workmonth = Service.WorkMonthRBToWorkMonth(newWorkmonth);
+        WorkMonth workmonth = Service.workMonthRBToWorkMonth(newWorkmonth);
 
         timelogger.addMonth(workmonth);
 
@@ -84,7 +85,7 @@ public class Service extends ServiceBase {
     
     public static WorkDay tryAddWorkDay(
             TimeLogger timelogger, WorkDayRB newWorkday) {
-        WorkDay workday = Service.WorkDayRBToWorkDay(newWorkday);
+        WorkDay workday = Service.workDayRBToWorkDay(newWorkday);
 
         int yearToAddTo = newWorkday.getYear();
         int monthToAddTo = newWorkday.getMonth();
@@ -109,7 +110,7 @@ public class Service extends ServiceBase {
     
     public static Task tryAddTaskStart(
             TimeLogger timelogger, StartTaskRB newStartTask) {
-        Task task = Service.StartTaskRBToTask(newStartTask);
+        Task task = Service.startTaskRBToTask(newStartTask);
 
         int yearToAddTo = newStartTask.getYear();
         int monthToAddTo = newStartTask.getMonth();
@@ -137,7 +138,7 @@ public class Service extends ServiceBase {
     
     public static Task tryAddTaskFinish(
             TimeLogger timelogger, FinishingTaskRB finishingTask) {
-        Task taskInfo = Service.FinishingTaskRBToTask(finishingTask);
+        Task taskInfo = Service.finishingTaskRBToTask(finishingTask);
 
         int yearToAddTo = finishingTask.getYear();
         int monthToAddTo = finishingTask.getMonth();
@@ -167,8 +168,8 @@ public class Service extends ServiceBase {
     
     public static Task tryModifyTask(
             TimeLogger timelogger,  ModifyTaskRB modifyTask) {
-        Task taskInfo = Service.ModifyTaskRBToTask(modifyTask);
-        Task newTask = Service.ModifyTaskRBToNewTask(modifyTask);
+        Task taskInfo = Service.modifyTaskRBToTask(modifyTask);
+        Task newTask = Service.modifyTaskRBToNewTask(modifyTask);
 
         int yearToAddTo = modifyTask.getYear();
         int monthToAddTo = modifyTask.getMonth();

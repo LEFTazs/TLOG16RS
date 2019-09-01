@@ -11,6 +11,11 @@ import timelogger.exceptions.*;
  * Utility functions for the timelogger package.
  */
 public class Util {
+    
+    private Util() {
+        throw new IllegalStateException("Utility class");
+    }
+    
     /**
      * Round the given interval, so that it's length is a multiple of a quarter hour.
      * The starttime will not be rounded, only the endtime.
@@ -41,19 +46,19 @@ public class Util {
      */
     public static boolean isSeperatedTime(
             List<Task> tasks, Task t) {
-        List<Task> tasks_ = new ArrayList<>(tasks);
+        List<Task> tasksCopy = new ArrayList<>(tasks);
         boolean isNotSeperatedTime;
         if (t.isEndTimeSet()) {
-            isNotSeperatedTime = tasks_.stream()
-                    .filter(task -> task.isEndTimeSet())
+            isNotSeperatedTime = tasksCopy.stream()
+                    .filter(Task::isEndTimeSet)
                     .anyMatch(checkable -> 
                             (t.getEndTime().isAfter(checkable.getStartTime()) && 
                             t.getStartTime().isBefore(checkable.getEndTime()))
                             || t.getStartTime().equals(checkable.getStartTime())
                     );
         } else {
-            isNotSeperatedTime = tasks_.stream()
-                    .filter(task -> task.isEndTimeSet())
+            isNotSeperatedTime = tasksCopy.stream()
+                    .filter(Task::isEndTimeSet)
                     .anyMatch(checkable -> 
                             t.getStartTime().isBefore(checkable.getEndTime())
                     );

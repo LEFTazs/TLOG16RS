@@ -26,10 +26,9 @@ public class WorkMonth {
      * @return long Extra minutes for this month.
      */
     public long getExtraMinPerMonth() {
-        long extraMins = days.stream()
-                .mapToLong(workDay -> workDay.getExtraMinPerDay())
+        return days.stream()
+                .mapToLong(WorkDay::getExtraMinPerDay)
                 .sum();
-        return extraMins;
     }
     
     /**
@@ -113,7 +112,7 @@ public class WorkMonth {
     
     private void updateSumPerMonth() {
         sumPerMonth = days.stream()
-                .mapToLong(day -> day.getSumPerDay())
+                .mapToLong(WorkDay::getSumPerDay)
                 .sum();
     }
 
@@ -130,17 +129,8 @@ public class WorkMonth {
     
     private void updateRequiredMinPerMonth() {
         requiredMinPerMonth = days.stream()
-                .mapToLong(day -> day.getRequiredMinPerDay())
+                .mapToLong(WorkDay::getRequiredMinPerDay)
                 .sum();
     }
     
-    /**
-     * Print out this month's days line-by-line.
-     * Formatting is the following: {index}. {date}
-     */
-    public void printDays() {
-        for (int i = 0; i < days.size(); i++) {
-            System.out.printf("%d. %s\n", i + 1, days.get(i).getActualDay());
-        }
-    }
 }

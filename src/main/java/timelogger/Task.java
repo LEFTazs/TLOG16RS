@@ -56,8 +56,7 @@ public class Task {
     public long getMinPerTask()  {
         throwExceptionIfStartTimeNotSet();
         throwExceptionIfEndTimeNotSet();
-        long minPerTask = MINUTES.between(startTime, endTime);
-        return minPerTask;
+        return MINUTES.between(startTime, endTime);
     }
     
     /**
