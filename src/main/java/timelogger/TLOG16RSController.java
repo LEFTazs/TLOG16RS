@@ -18,7 +18,7 @@ public class TLOG16RSController {
 	TimeLogger timelogger;
         
         public TLOG16RSController() {
-            timelogger = new TimeLogger();
+            timelogger = new TimeLogger("Szolar Balazs");
             
             List<TimeLogger> timeloggerEntries = 
                     Ebean.find(TimeLogger.class).findList();

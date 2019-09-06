@@ -16,11 +16,16 @@ import timelogger.exceptions.*;
 public class TimeLogger {
     @lombok.Getter @lombok.Setter
     @Id int id;
+    
+    @lombok.Getter @lombok.Setter
+    private String name;
+    
     @OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY)
     private List<WorkMonth> months;
-
-    public TimeLogger() {
+    
+    public TimeLogger(String name) {
         months = new ArrayList<>();
+        this.name = name;
     }
     
     /**
