@@ -1,5 +1,6 @@
 package timelogger;
 
+import com.avaje.ebean.Ebean;
 import timelogger.entities.WorkDay;
 import timelogger.entities.WorkMonth;
 import timelogger.entities.Task;
@@ -223,7 +224,7 @@ public class Service extends ServiceBase {
         if (taskToDelete == null)
             return;
 
-        workdayToSearch.deleteTask(taskToDelete);
+        Ebean.delete(taskToDelete);
     }
     
     

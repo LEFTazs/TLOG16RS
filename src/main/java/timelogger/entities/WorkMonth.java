@@ -144,4 +144,7 @@ public class WorkMonth {
                 .sum();
     }
     
+    public void setDateFromDateString() {
+        date = YearMonth.parse(dateString);
+    }
 }
