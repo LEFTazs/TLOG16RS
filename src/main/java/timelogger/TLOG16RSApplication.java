@@ -17,6 +17,6 @@ public class TLOG16RSApplication {
     
     @PostConstruct
     public void createDatabase() { 
-        CreateDatabase createDatabase = new CreateDatabase(config);
+        new CreateDatabase(config);
     }
 }

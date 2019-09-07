@@ -37,40 +37,38 @@ public class CreateDatabase {
     }
     
     private void initDataSourceConfig(TLOG16RSConfiguration config) {
-        DataSourceConfig dataSourceConfig = new DataSourceConfig();
-        dataSourceConfig.setDriver(config.getDriver());
-        dataSourceConfig.setUrl(config.getUrl());
-        dataSourceConfig.setUsername(config.getUsr());
-        dataSourceConfig.setPassword(config.getPassword());
-        this.dataSourceConfig = dataSourceConfig;
+        DataSourceConfig newDataSourceConfig = new DataSourceConfig();
+        newDataSourceConfig.setDriver(config.getDriver());
+        newDataSourceConfig.setUrl(config.getUrl());
+        newDataSourceConfig.setUsername(config.getUsr());
+        newDataSourceConfig.setPassword(config.getPassword());
+        this.dataSourceConfig = newDataSourceConfig;
     }
     
     private void initServerConfig(TLOG16RSConfiguration config) {
-        ServerConfig serverConfig = new ServerConfig();
-        serverConfig.setName(config.getUsr());
-        serverConfig.setDdlGenerate(false);
-        serverConfig.setDdlRun(false);
-        serverConfig.setRegister(true);
-        serverConfig.setDataSourceConfig(this.dataSourceConfig);
-        serverConfig.setClasses(Arrays.asList(
+        ServerConfig newServerConfig = new ServerConfig();
+        newServerConfig.setName(config.getUsr());
+        newServerConfig.setDdlGenerate(false);
+        newServerConfig.setDdlRun(false);
+        newServerConfig.setRegister(true);
+        newServerConfig.setDataSourceConfig(this.dataSourceConfig);
+        newServerConfig.setClasses(Arrays.asList(
                 Task.class, WorkDay.class, WorkMonth.class, TimeLogger.class));
-        serverConfig.setDefaultServer(true);
-        this.serverConfig = serverConfig;
+        newServerConfig.setDefaultServer(true);
+        this.serverConfig = newServerConfig;
     }
     
     private void initServer() {
-        EbeanServer ebeanServer = EbeanServerFactory.create(this.serverConfig);
+        EbeanServer newEbeanServer = EbeanServerFactory.create(this.serverConfig);
         
-        this.ebeanServer = ebeanServer;
+        this.ebeanServer = newEbeanServer;
     }
     
     private void updateSchema(TLOG16RSConfiguration config) {
-        try {
-            Connection connection = DriverManager.getConnection(
+        try (Connection connection = DriverManager.getConnection(
                     config.getUrl(),
                     config.getUsr(),
-                    config.getPassword()
-            );
+                    config.getPassword())) {
             Database database = DatabaseFactory.getInstance()
                     .findCorrectDatabaseImplementation(new JdbcConnection(connection));
             Liquibase liquibase = new Liquibase(
