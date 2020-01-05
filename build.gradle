@@ -1,32 +1,55 @@
+import com.bmuschko.gradle.docker.tasks.image.*
+import com.bmuschko.gradle.docker.tasks.container.*
+
 buildscript {
     repositories {
-        mavenCentral()
-		maven {
-		  url "https://plugins.gradle.org/m2/"
-		}
+        jcenter()
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:2.1.6.RELEASE")
 	classpath("org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.7")
+        classpath 'com.bmuschko:gradle-docker-plugin:6.1.1'
     }
+}
+
+plugins {
+    id 'pl.allegro.tech.build.axion-release' version '1.10.3'
+    id 'com.bmuschko.docker-java-application' version '6.1.1'
 }
 
 apply plugin: 'java'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 apply plugin: 'org.sonarqube'
+apply plugin: 'application'
+apply plugin: 'com.bmuschko.docker-remote-api'
+
+
+if (!hasProperty('mainClass')) {
+    ext.mainClass = 'timelogger.TLOG16RSApplication'
+}
+mainClassName = 'timelogger.TLOG16RSApplication'
+
 
 bootJar {
-    baseName = 'timelogger-rest-service'
-    version =  '0.1.0'
+    enabled = false
+}
+jar {
+    enabled = true
 }
 
 repositories {
     mavenCentral()
 }
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = '1.8'
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+scmVersion {
+    versionCreator 'versionWithBranch'
+}
+project.version = scmVersion.version
+
 
 dependencies {
     compile("org.springframework.boot:spring-boot-starter-web")
@@ -54,3 +77,42 @@ classes.doLast {
         ]
     }
 }
+
+
+run {
+    args 'server', 'src/main/resources/application.yml'
+}
+
+docker {
+    url = "unix:///var/run/docker.sock";
+}
+
+task createDockerfile(type: Dockerfile) {    
+    dependsOn = [':distTar']
+    destFile = project.file('build/Dockerfile')
+    from "frolvlad/alpine-java:jdk8-slim"
+    label(['maintainer': 'Szolar Balazs "leftazshun@gmail.com"'])
+
+    def appFolder = "/${rootProject.name}/"
+
+    runCommand "apk --update add curl tar bash wget openssl"
+    runCommand "wget --no-check-certificate https://github.com/jwilder/dockerize/releases/download/v0.6.1/dockerize-linux-amd64-v0.6.1.tar.gz"
+    runCommand "tar -C /usr/local/bin -xzvf dockerize-linux-amd64-v0.6.1.tar.gz"
+
+    addFile "distributions/${project.distTar.archiveName}", "/tmp"
+    runCommand "mv /tmp/${project.applicationName}-${project.version} /${project.applicationName}"
+    workingDir  "${appFolder}"
+    
+    addFile "resources/main/application.yml.template", "/${rootProject.name}"
+    addFile "resources/main/migrations.xml", "${appFolder}/src/main/resources/migrations.xml"
+
+    defaultCommand  'bash', '-c', 'dockerize -wait ${DB_URL/jdbc:mariadb/tcp}' + " -template /${rootProject.name}/application.yml.template:/${rootProject.name}/application.yml /${project.applicationName}/bin/${project.applicationName}  server ${project.applicationName}/application.yml"
+
+}
+
+dockerBuildImage {
+    dependsOn createDockerfile
+    inputDir = file('build')
+    images.add("polc/${project.name.toLowerCase()}")
+}
+

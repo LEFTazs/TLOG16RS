@@ -1,0 +1,8 @@
+spring:
+    profiles: 
+        active: prod
+url: {{ .Env.DB_URL }}
+usr: {{ .Env.DB_USER }}
+password: {{ .Env.DB_PASS }}
+configfile: ./src/main/resources/migrations.xml
+driver: org.mariadb.jdbc.Driver

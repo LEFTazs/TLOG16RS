@@ -1,0 +1,8 @@
+spring:
+    profiles: 
+        active: prod
+url: jdbc:mariadb://localhost:9001/timelogger
+usr: timelogger
+password: 633Ym2aZ5b9Wtzh4EJc4pANx
+configfile: ./src/main/resources/migrations.xml
+driver: org.mariadb.jdbc.Driver
