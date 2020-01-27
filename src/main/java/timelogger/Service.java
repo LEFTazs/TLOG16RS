@@ -89,7 +89,19 @@ public class Service extends ServiceBase {
             TimeLogger timelogger, WorkDayRB newWorkday) {
         try {
             WorkDay addedWorkDay  = 
-                    Service.tryAddWorkDay(timelogger, newWorkday);
+                    Service.tryAddWorkDay(timelogger, newWorkday, false);
+            return ResponseCreator.createOkResponse(addedWorkDay);
+        } catch (Exception e) {
+            log.error(e.toString());
+            return ResponseCreator.createExceptionResponse(e);
+        }
+    }
+    
+    public static ResponseEntity<Object> addWeekendWorkDay(
+            TimeLogger timelogger, WorkDayRB newWorkday) {
+        try {
+            WorkDay addedWorkDay  = 
+                    Service.tryAddWorkDay(timelogger, newWorkday, true);
             return ResponseCreator.createOkResponse(addedWorkDay);
         } catch (Exception e) {
             log.error(e.toString());
@@ -98,7 +110,7 @@ public class Service extends ServiceBase {
     }
     
     public static WorkDay tryAddWorkDay(
-            TimeLogger timelogger, WorkDayRB newWorkday) {
+            TimeLogger timelogger, WorkDayRB newWorkday, boolean enableWeekend) {
         WorkDay workday = Service.workDayRBToWorkDay(newWorkday);
 
         int yearToAddTo = newWorkday.getYear();
@@ -106,7 +118,7 @@ public class Service extends ServiceBase {
         WorkMonth workmonthToAddTo = Service.findWorkMonthOrCreateNew(
                 timelogger, yearToAddTo, monthToAddTo);
 
-        workmonthToAddTo.addWorkDay(workday);
+        workmonthToAddTo.addWorkDay(workday, enableWeekend);
 
         return workday;
     }

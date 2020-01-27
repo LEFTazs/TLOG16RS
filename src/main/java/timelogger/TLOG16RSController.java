@@ -76,6 +76,14 @@ public class TLOG16RSController {
             return response;
 	}
         
+        @PostMapping("/timelogger/workmonths/weekendworkdays")
+	public ResponseEntity<Object> addWeekendWorkDay(@RequestBody WorkDayRB newWorkday) {
+	    ResponseEntity<Object> response = 
+                    Service.addWeekendWorkDay(timelogger, newWorkday);
+            updateTimeLoggerInDatabase();
+            return response;
+	}
+        
         @PostMapping("/timelogger/workmonths/workdays/tasks/start")
 	public ResponseEntity<Object> addTaskStart(@RequestBody StartTaskRB newStartTask) {
 	    ResponseEntity<Object> response = 
