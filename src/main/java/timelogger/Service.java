@@ -6,25 +6,28 @@ import timelogger.entities.WorkMonth;
 import timelogger.entities.Task;
 import timelogger.entities.TimeLogger;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 
 @Slf4j
 public class Service extends ServiceBase {
     
-    public static List<WorkMonth> listWorkmonths(TimeLogger timelogger) {
-        return timelogger.getMonths();
+    public static ResponseEntity<Object> listWorkmonths(TimeLogger timelogger) {
+        List<WorkMonth> workMonthList = timelogger.getMonths();
+        return ResponseCreator.createOkResponse(workMonthList);
     }
     
     
-    public static List<WorkDay> listWorkmonthDays(
+    public static ResponseEntity<Object> listWorkmonthDays(
             TimeLogger timelogger, int year, int month) {
         try {
-            return Service.tryListWorkmonthDays(timelogger, year, month);
+            List<WorkDay> workMonthDays = 
+                    Service.tryListWorkmonthDays(timelogger, year, month);
+            return ResponseCreator.createOkResponse(workMonthDays);
         } catch (Exception e) {
             log.error(e.toString());
-            return new ArrayList<>();
+            return ResponseCreator.createExceptionResponse(e);
         }
     }
     
@@ -36,13 +39,15 @@ public class Service extends ServiceBase {
     }
     
     
-    public static List<Task> listWorkDayTasks(
+    public static ResponseEntity<Object> listWorkDayTasks(
             TimeLogger timelogger, int year,  int month, int day) {
         try {
-            return Service.tryListWorkDayTasks(timelogger, year, month, day);
+            List<Task> workDayTasks =
+                    Service.tryListWorkDayTasks(timelogger, year, month, day);
+            return ResponseCreator.createOkResponse(workDayTasks);
         } catch (Exception e) {
             log.error(e.toString());
-            return new ArrayList<>();
+            return ResponseCreator.createExceptionResponse(e);
         }
     }
     
@@ -58,13 +63,15 @@ public class Service extends ServiceBase {
     }
     
     
-    public static WorkMonth addWorkMonth(
+    public static ResponseEntity<Object> addWorkMonth(
             TimeLogger timelogger, WorkMonthRB newWorkmonth) {
         try {
-            return Service.tryAddWorkMonth(timelogger, newWorkmonth);
+            WorkMonth addedMonth = 
+                    Service.tryAddWorkMonth(timelogger, newWorkmonth);
+            return ResponseCreator.createOkResponse(addedMonth);
         } catch (Exception e) {
             log.error(e.toString());
-            return null;
+            return ResponseCreator.createExceptionResponse(e);
         }
     }
     
@@ -78,13 +85,15 @@ public class Service extends ServiceBase {
     }
     
     
-    public static WorkDay addWorkDay(
+    public static ResponseEntity<Object> addWorkDay(
             TimeLogger timelogger, WorkDayRB newWorkday) {
         try {
-            return Service.tryAddWorkDay(timelogger, newWorkday);
+            WorkDay addedWorkDay  = 
+                    Service.tryAddWorkDay(timelogger, newWorkday);
+            return ResponseCreator.createOkResponse(addedWorkDay);
         } catch (Exception e) {
             log.error(e.toString());
-            return null;
+            return ResponseCreator.createExceptionResponse(e);
         }
     }
     
@@ -103,13 +112,15 @@ public class Service extends ServiceBase {
     }
     
     
-    public static Task addTaskStart(
+    public static ResponseEntity<Object> addTaskStart(
             TimeLogger timelogger, StartTaskRB newStartTask) {
         try {
-            return Service.tryAddTaskStart(timelogger, newStartTask);
+            Task addedTask = 
+                    Service.tryAddTaskStart(timelogger, newStartTask);
+            return ResponseCreator.createOkResponse(addedTask);
         } catch (Exception e) {
             log.error(e.toString());
-            return null;
+            return ResponseCreator.createExceptionResponse(e);
         }
     }
     
@@ -131,13 +142,15 @@ public class Service extends ServiceBase {
     }
     
     
-    public static Task addTaskFinish(
+    public static ResponseEntity<Object> addTaskFinish(
             TimeLogger timelogger, FinishingTaskRB finishingTask) {
         try {
-            return Service.tryAddTaskFinish(timelogger, finishingTask);
+            Task addedTask = 
+                    Service.tryAddTaskFinish(timelogger, finishingTask);
+            return ResponseCreator.createOkResponse(addedTask);
         } catch (Exception e) {
             log.error(e.toString());
-            return null;
+            return ResponseCreator.createExceptionResponse(e);
         }
     }
     
@@ -161,13 +174,15 @@ public class Service extends ServiceBase {
     }
     
     
-    public static Task modifyTask(
+    public static ResponseEntity<Object> modifyTask(
             TimeLogger timelogger,  ModifyTaskRB modifyTask) {
         try {
-            return Service.tryModifyTask(timelogger, modifyTask);
+            Task modifiedTask = 
+                    Service.tryModifyTask(timelogger, modifyTask);
+            return ResponseCreator.createOkResponse(modifiedTask);
         } catch (Exception e) {
             log.error(e.toString());
-            return null;
+            return ResponseCreator.createExceptionResponse(e);
         }
     }
     

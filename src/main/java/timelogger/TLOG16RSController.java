@@ -4,6 +4,7 @@ import timelogger.entities.*;
 import com.avaje.ebean.Ebean;
 import java.util.List;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -30,65 +31,72 @@ public class TLOG16RSController {
         
         
 	@GetMapping("/timelogger/workmonths")
-	public List<WorkMonth> listWorkmonths() {
+	public ResponseEntity<Object> listWorkmonths() {
             loadTimeLoggerFromDatabase();
-            List<WorkMonth> workmonths = Service.listWorkmonths(timelogger);
+            ResponseEntity<Object> response = 
+                    Service.listWorkmonths(timelogger);
             updateTimeLoggerInDatabase();
-            return workmonths;
+            return response;
 	}
         
         @GetMapping("/timelogger/workmonths/{year}/{month}")
-	public List<WorkDay> listWorkmonthDays(
+	public ResponseEntity<Object> listWorkmonthDays(
                 @PathVariable int year, @PathVariable int month) {
             loadTimeLoggerFromDatabase();
-            List<WorkDay> workdays = Service.listWorkmonthDays(timelogger, year, month);
+            ResponseEntity<Object> response = 
+                    Service.listWorkmonthDays(timelogger, year, month);
             updateTimeLoggerInDatabase();
-            return workdays;
+            return response;
 	}
         
         @GetMapping("/timelogger/workmonths/{year}/{month}/{day}")
-	public List<Task> listWorkDayTasks(
+	public ResponseEntity<Object> listWorkDayTasks(
                 @PathVariable int year, @PathVariable int month, 
                 @PathVariable int day) {
             loadTimeLoggerFromDatabase();
-            List<Task> tasks = Service.listWorkDayTasks(timelogger, year, month, day);
+            ResponseEntity<Object> response = 
+                    Service.listWorkDayTasks(timelogger, year, month, day);
             updateTimeLoggerInDatabase();
-            return tasks;
+            return response;
 	}
 	
 	@PostMapping("/timelogger/workmonths")
-	public WorkMonth addWorkMonth(@RequestBody WorkMonthRB newWorkmonth) {
-            WorkMonth workmonth = Service.addWorkMonth(timelogger, newWorkmonth);
+	public ResponseEntity<Object> addWorkMonth(@RequestBody WorkMonthRB newWorkmonth) {
+            ResponseEntity<Object> response = 
+                    Service.addWorkMonth(timelogger, newWorkmonth);
             updateTimeLoggerInDatabase();
-            return workmonth;
+            return response;
 	}
         
         @PostMapping("/timelogger/workmonths/workdays")
-	public WorkDay addWorkDay(@RequestBody WorkDayRB newWorkday) {
-	    WorkDay workday = Service.addWorkDay(timelogger, newWorkday);
+	public ResponseEntity<Object> addWorkDay(@RequestBody WorkDayRB newWorkday) {
+	    ResponseEntity<Object> response = 
+                    Service.addWorkDay(timelogger, newWorkday);
             updateTimeLoggerInDatabase();
-            return workday;
+            return response;
 	}
         
         @PostMapping("/timelogger/workmonths/workdays/tasks/start")
-	public Task addTaskStart(@RequestBody StartTaskRB newStartTask) {
-	    Task task = Service.addTaskStart(timelogger, newStartTask);
+	public ResponseEntity<Object> addTaskStart(@RequestBody StartTaskRB newStartTask) {
+	    ResponseEntity<Object> response = 
+                    Service.addTaskStart(timelogger, newStartTask);
             updateTimeLoggerInDatabase();
-            return task;
+            return response;
 	}
         
         @PutMapping("/timelogger/workmonths/workdays/tasks/finish")
-        public Task addTaskFinish(@RequestBody FinishingTaskRB finishingTask) {
-            Task task = Service.addTaskFinish(timelogger, finishingTask);
+        public ResponseEntity<Object> addTaskFinish(@RequestBody FinishingTaskRB finishingTask) {
+            ResponseEntity<Object> response = 
+                    Service.addTaskFinish(timelogger, finishingTask);
             updateTimeLoggerInDatabase();
-            return task;
+            return response;
         }
         
         @PutMapping("/timelogger/workmonths/workdays/tasks/modify")
-        public Task modifyTask(@RequestBody ModifyTaskRB modifyTask) {
-            Task task = Service.modifyTask(timelogger, modifyTask);
+        public ResponseEntity<Object> modifyTask(@RequestBody ModifyTaskRB modifyTask) {
+            ResponseEntity<Object> response = Service.modifyTask(timelogger, modifyTask);
             updateTimeLoggerInDatabase();
-            return task;
+            return response;
         }
         
         @DeleteMapping("/timelogger/workmonths/workdays/tasks/delete")
