@@ -4,6 +4,7 @@ import timelogger.entities.WorkDay;
 import timelogger.entities.Task;
 import java.time.LocalTime;
 import java.time.DayOfWeek;
+import java.time.format.DateTimeFormatter;
 import static java.time.temporal.ChronoUnit.MINUTES;
 import java.util.ArrayList;
 import java.util.List;
@@ -98,6 +99,19 @@ public class Util {
         long timeInterval = MINUTES.between(startTime, endTime);
         boolean isMultiple = timeInterval % 15 == 0;
         return isMultiple;
+    }
+    
+    public static LocalTime convertStringToLocalTime(String timeToParse) {
+        timeToParse = convertStringToUsedFormat(timeToParse);
+        DateTimeFormatter usedFormat = DateTimeFormatter.ofPattern("Hmm");
+        return LocalTime.parse(timeToParse, usedFormat);
+    }
+    
+    private static String convertStringToUsedFormat(String timeToFormat) {
+        if (timeToFormat.charAt(0) == '0')
+            timeToFormat = timeToFormat.substring(1);
+        timeToFormat = timeToFormat.replace(":", "");
+        return timeToFormat;
     }
 
 }

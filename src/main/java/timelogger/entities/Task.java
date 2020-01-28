@@ -39,8 +39,8 @@ public class Task {
         this.comment = comment;
         if (startTime == null || endTime == null)
             throw new EmptyTimeFieldException();
-        this.startTime = LocalTime.parse(startTime);
-        this.endTime = LocalTime.parse(endTime);
+        this.startTime = Util.convertStringToLocalTime(startTime);
+        this.endTime = Util.convertStringToLocalTime(endTime);
         throwExceptionIfInvalidTaskId();
         throwExceptionIfWrongTimeOrder();
         roundEndTime();
@@ -147,7 +147,7 @@ public class Task {
     }
     
     public void setStartTime(String startTime) {
-        this.startTime = LocalTime.parse(startTime);
+        this.startTime = Util.convertStringToLocalTime(startTime);
         if (isEndTimeSet()) {
             roundEndTime();
             throwExceptionIfWrongTimeOrder();
@@ -167,7 +167,7 @@ public class Task {
     }
     
     public void setEndTime(String endTime) {
-        this.endTime = LocalTime.parse(endTime);
+        this.endTime = Util.convertStringToLocalTime(endTime);
         roundEndTime();
         throwExceptionIfWrongTimeOrder();
     }
@@ -180,8 +180,8 @@ public class Task {
     }
     
     public void setTimes(String startTime, String endTime) {
-        this.setTimes(LocalTime.parse(startTime), 
-                LocalTime.parse(endTime));
+        this.setTimes(Util.convertStringToLocalTime(startTime), 
+                Util.convertStringToLocalTime(endTime));
         roundEndTime();
         throwExceptionIfWrongTimeOrder();
     }
